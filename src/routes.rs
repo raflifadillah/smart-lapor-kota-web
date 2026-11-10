@@ -15,6 +15,7 @@ pub fn create_router(pool: DbPool) -> Router {
         .allow_methods(Any)
         .allow_headers(Any);
 
+    // Endpoint yang berada di bawah prefix /api
     let api_routes = Router::new()
         .route("/", get(|| async { "Smart Lapor Kota API is running!" }))
         // Auth Routes
@@ -41,6 +42,8 @@ pub fn create_router(pool: DbPool) -> Router {
         .route("/admin/broadcast", post(admin::send_broadcast));
 
     Router::new()
+        // Handler untuk root domain (mencegah error 404 saat membuka domain utama)
+        .route("/", get(|| async { "Smart Public Facility & Incident Reporter API Server is Online!" }))
         .nest("/api", api_routes)
         .layer(cors)
         .with_state(pool)
