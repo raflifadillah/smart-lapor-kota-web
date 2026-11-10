@@ -6,6 +6,7 @@ authors = ["Rafli Fadillah <rafli@teknokrat.ac.id>", "Dr. Erliyan Redy Susanto, 
 description = "Smart Public Facility & Incident Reporter - Smart City Civic Operations Platform"
 
 [dependencies]
+anyhow = "1.0"
 axum = { version = "0.7", features = ["multipart"] }
 tokio = { version = "1.38", features = ["full"] }
 tower = { version = "0.4", features = ["util"] }
