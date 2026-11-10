@@ -16,12 +16,8 @@ pub fn create_router(pool: DbPool) -> Router {
         .allow_methods(Any)
         .allow_headers(Any);
 
-let api_routes = Router::new()
-    .route("/", get(|| async { "Smart Lapor Kota API is running!" }))
-    // Auth Routes
-    .route("/auth/register", post(auth::register))
-    .route("/auth/login", post(auth::login))    // Auth Routes
-    .route("/auth/register", post(auth::register))
+    let api_routes = Router::new()
+        .route("/", get(|| async { "Smart Lapor Kota API is running!" }))
         // Auth Routes
         .route("/auth/register", post(auth::register))
         .route("/auth/login", post(auth::login))
@@ -43,16 +39,11 @@ let api_routes = Router::new()
         .route("/admin/gis/units", get(admin::get_gis_field_units))
         .route("/admin/incidents/:id/assign", post(admin::assign_incident))
         .route("/admin/incidents/:id/status", put(admin::update_incident_status))
-        .route("/admin/broadcast", post(admin::send_broadcast))
-        .with_state(pool);
+        .route("/admin/broadcast", post(admin::send_broadcast));
 
     Router::new()
         .nest("/api", api_routes)
-        // Serve static assets directly
-        .nest_service("/static", ServeDir::new("static"))
-        .nest_service("/assets", ServeDir::new("static/assets"))
-        // Serve SPA index
-        .fallback_service(ServeFile::new("static/index.html"))
         .layer(cors)
-}
+        .with_state(pool)
+}}
 
