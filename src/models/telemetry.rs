@@ -32,7 +32,7 @@ pub struct AdminKpiSummary {
     pub avg_response_hours: f64,
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, sqlx::FromRow)]
 pub struct SpatialIncidentPoint {
     pub id: Uuid,
     pub ticket_number: String,
