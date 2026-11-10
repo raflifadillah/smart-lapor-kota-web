@@ -50,9 +50,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let app = routes::create_router(pool);
 
-    let addr: SocketAddr = format!("{}:{}", config.server_host, config.server_port)
-        .parse()
-        .expect("Valid socket address");
+    let port = std::env::var("PORT").unwrap_or_else(|_| config.server_port.to_string());
+    let addr: SocketAddr = format!("0.0.0.0:{}", port)
+    .parse()
+    .expect("Valid socket address");
 
     info!("Server listening on http://{}", addr);
     info!("Web Application available at: http://localhost:{}", config.server_port);
