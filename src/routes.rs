@@ -45,5 +45,5 @@ pub fn create_router(pool: DbPool) -> Router {
         .nest("/api", api_routes)
         .layer(cors)
         .with_state(pool)
-}}
+}
 
