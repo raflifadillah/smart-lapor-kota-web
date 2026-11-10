@@ -27,39 +27,35 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     info!(" Copyright (C) 2026 Rafli Fadillah & Dr. Erliyan Redy Susanto, M.Kom");
     info!("============================================================");
 
-    let config = Config::from_env();
+    // Ambil DATABASE_URL dari Environment Variable Vercel / Config
+    let database_url = std::env::var("DATABASE_URL").unwrap_or_else(|_| {
+        let cfg = Config::from_env();
+        cfg.database_url
+    });
 
-    // Ensure uploads directory exists
-    if let Err(e) = tokio::fs::create_dir_all(&config.upload_dir).await {
-        error!("Could not create upload directory {}: {}", config.upload_dir, e);
+    // Tangani read-only filesystem Vercel secara aman agar tidak crash
+    if let Err(e) = std::fs::create_dir_all("./static/uploads") {
+        tracing::warn!("Could not create upload directory ./static/uploads: {}", e);
     }
 
-    // Connect to PostgreSQL with PostGIS
-    let pool = match db::init_db(&config.database_url).await {
-        Ok(p) => {
-            info!("Database initialized and ready.");
-            p
-        }
-        Err(e) => {
-            error!("Failed to connect to PostgreSQL: {}", e);
-            error!("Please make sure PostgreSQL is running with PostGIS enabled.");
-            error!("You can run: docker-compose up -d to start the database container.");
-            return Err(e.into());
-        }
-    };
+    // Initialize Database Pool
+    let pool = db::init_db(&database_url).await.map_err(|e| {
+        error!("Failed to connect to PostgreSQL: {}", e);
+        error!("Please make sure PostgreSQL is running with PostGIS enabled.");
+        error!("You can run: docker-compose up -d to start the database container.");
+        e
+    })?;
 
+    // Create Axum router
     let app = routes::create_router(pool);
 
-let port = std::env::var("PORT").unwrap_or_else(|_| config.server_port.to_string());
-let addr: SocketAddr = format!("0.0.0.0:{}", port)
-    .parse()
-    .expect("Valid socket address");
-    info!("Server listening on http://{}", addr);
-    info!("Web Application available at: http://localhost:{}", config.server_port);
+    // Run application listener
+    let port = std::env::var("PORT").unwrap_or_else(|_| "3000".to_string());
+    let addr: SocketAddr = format!("0.0.0.0:{}", port).parse()?;
+    info!("Server starting on {}", addr);
 
-    let listener = tokio::net::TcpListener::bind(addr).await?;
+    let listener = tokio::net::TcpListener::bind(&addr).await?;
     axum::serve(listener, app).await?;
 
     Ok(())
 }
-
