@@ -16,10 +16,11 @@ pub fn create_router(pool: DbPool) -> Router {
         .allow_methods(Any)
         .allow_headers(Any);
 
-    let api_routes = Router::new()
-    let api_routes = Router::new()
-    .route("/", get(|| async { "Smart Lapor Kota API is running!" })) // <-- Tambahkan baris ini
+let api_routes = Router::new()
+    .route("/", get(|| async { "Smart Lapor Kota API is running!" }))
     // Auth Routes
+    .route("/auth/register", post(auth::register))
+    .route("/auth/login", post(auth::login))    // Auth Routes
     .route("/auth/register", post(auth::register))
         // Auth Routes
         .route("/auth/register", post(auth::register))
