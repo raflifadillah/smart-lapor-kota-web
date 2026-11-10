@@ -1,0 +1,173 @@
+/* Smart Lapor Kota - Civic Tech Design System */
+:root {
+  --primary: #00152F;
+  --primary-container: #0F2A4A;
+  --on-primary: #FFFFFF;
+  --secondary: #32618E;
+  --secondary-container: #9ECAFD;
+  --tertiary: #00190E;
+  --tertiary-container: #00301E;
+  --tertiary-fixed-dim: #4EDEA3;
+  --tertiary-accent: #00A472;
+  --background: #F8F9FF;
+  --surface: #F8F9FF;
+  --surface-container-lowest: #FFFFFF;
+  --surface-container-low: #EFF4FF;
+  --surface-container: #E5EEFF;
+  --surface-container-high: #DCE9FF;
+  --surface-container-highest: #D3E4FE;
+  --on-surface: #0B1C30;
+  --on-surface-variant: #43474E;
+  --outline: #74777F;
+  --outline-variant: #C4C6CF;
+  --error: #BA1A1A;
+  --error-container: #FFDAD6;
+  --on-error: #FFFFFF;
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background-color: var(--background);
+  color: var(--on-surface);
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.font-tabular {
+  font-family: 'Inter', monospace, sans-serif;
+  font-feature-settings: 'tnum';
+}
+
+/* Glassmorphism Navigation */
+.nav-blur {
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  background-color: rgba(15, 42, 74, 0.95);
+}
+
+.bottom-nav-blur {
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  background-color: rgba(255, 255, 255, 0.92);
+}
+
+/* Custom Leaflet Map styling */
+.leaflet-container {
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  border-radius: 1rem;
+}
+
+.pulse-marker {
+  display: block;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #BA1A1A;
+  cursor: pointer;
+  box-shadow: 0 0 0 rgba(186, 26, 26, 0.4);
+  animation: pulse-red 1.6s infinite;
+}
+
+@keyframes pulse-red {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(186, 26, 26, 0.7);
+  }
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 12px rgba(186, 26, 26, 0);
+  }
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(186, 26, 26, 0);
+  }
+}
+
+.pulse-marker-amber {
+  display: block;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #D97706;
+  box-shadow: 0 0 0 rgba(217, 119, 6, 0.4);
+  animation: pulse-amber 1.8s infinite;
+}
+
+@keyframes pulse-amber {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(217, 119, 6, 0.7);
+  }
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 10px rgba(217, 119, 6, 0);
+  }
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(217, 119, 6, 0);
+  }
+}
+
+.pulse-marker-blue {
+  display: block;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #2563EB;
+}
+
+.pulse-marker-green {
+  display: block;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #059669;
+}
+
+/* Stepper Connector Lines */
+.stepper-line {
+  position: absolute;
+  left: 1.125rem;
+  top: 2.25rem;
+  bottom: -0.5rem;
+  width: 2px;
+  background-color: #E2E8F0;
+  z-index: 0;
+}
+
+.stepper-line.completed {
+  background-color: #10B981;
+}
+
+/* Modal styles */
+.modal-overlay {
+  background-color: rgba(0, 21, 47, 0.65);
+  backdrop-filter: blur(4px);
+}
+
+/* Universal footer */
+.app-universal-footer {
+  border-top: 1px solid #E2E8F0;
+  background-color: #FFFFFF;
+  box-shadow: 0 -2px 10px rgba(0, 21, 47, 0.04);
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #F1F5F9;
+}
+::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94A3B8;
+}
+

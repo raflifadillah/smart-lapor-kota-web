@@ -1,0 +1,23 @@
+[package]
+name = "smart-lapor-kota"
+version = "0.1.0"
+edition = "2021"
+authors = ["Rafli Fadillah <rafli@teknokrat.ac.id>", "Dr. Erliyan Redy Susanto, M.Kom"]
+description = "Smart Public Facility & Incident Reporter - Smart City Civic Operations Platform"
+
+[dependencies]
+axum = { version = "0.7", features = ["multipart"] }
+tokio = { version = "1.38", features = ["full"] }
+tower = { version = "0.4", features = ["util"] }
+tower-http = { version = "0.5", features = ["cors", "fs", "trace"] }
+sqlx = { version = "0.7", features = ["runtime-tokio-rustls", "postgres", "chrono", "uuid", "json"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+chrono = { version = "0.4", features = ["serde"] }
+uuid = { version = "1.8", features = ["serde", "v4"] }
+dotenvy = "0.15"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+bcrypt = "0.15"
+jsonwebtoken = "9.3"
+

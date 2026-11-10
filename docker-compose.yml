@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  # PostgreSQL with PostGIS extension
+  db:
+    image: postgis/postgis:16-3.4
+    container_name: smart_lapor_postgis
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgrespassword
+      POSTGRES_DB: smart_lapor_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./migrations:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d smart_lapor_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # Rust Backend Application
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: smart_lapor_app
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgres://postgres:postgrespassword@db:5432/smart_lapor_db
+      SERVER_HOST: 0.0.0.0
+      SERVER_PORT: 8080
+      JWT_SECRET: super_secret_smart_lapor_kota_jwt_key_2026_teknokrat
+      RUST_LOG: info,smart_lapor_kota=debug
+      UPLOAD_DIR: ./static/uploads
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./static/uploads:/app/static/uploads
+
+volumes:
+  pgdata:
+

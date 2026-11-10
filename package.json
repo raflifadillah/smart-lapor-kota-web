@@ -1,0 +1,16 @@
+{
+  "name": "smart-lapor-kota",
+  "version": "1.0.0",
+  "description": "Smart Public Facility & Incident Reporter - Smart City Civic Operations Platform",
+  "main": "dev-server.js",
+  "scripts": {
+    "start": "node dev-server.js",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down"
+  },
+  "author": "Rafli Fadillah & Dr. Erliyan Redy Susanto, M.Kom",
+  "license": "MIT",
+  "dependencies": {
+    "docx": "^9.15.3"
+  }
+}
