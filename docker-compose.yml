@@ -1,48 +1,76 @@
 version: '3.8'
 
+# =============================================================================
+# Smart Lapor Kota — Docker Compose (Development + Production-Ready)
+# FIX #5: Migrasi database (SQL files) di-mount ke /docker-entrypoint-initdb.d/
+#         sehingga dieksekusi otomatis saat container PostgreSQL pertama kali start.
+# FIX #3: Semua nilai sensitif diambil dari file .env — tidak ada hardcoded secret.
+# =============================================================================
+
 services:
-  # PostgreSQL with PostGIS extension
+
+  # ---------------------------------------------------------------------------
+  # PostgreSQL 16 dengan ekstensi PostGIS 3.4 (Geospasial Smart City)
+  # ---------------------------------------------------------------------------
   db:
     image: postgis/postgis:16-3.4
     container_name: smart_lapor_postgis
-    restart: always
+    restart: unless-stopped
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgrespassword
-      POSTGRES_DB: smart_lapor_db
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgrespassword}
+      POSTGRES_DB: ${POSTGRES_DB:-smart_lapor_db}
     ports:
-      - "5432:5432"
+      - "${DB_PORT:-5432}:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
-      - ./migrations:/docker-entrypoint-initdb.d
+      # FIX #5: Script SQL di /docker-entrypoint-initdb.d/ dieksekusi otomatis
+      # saat volume pgdata masih kosong (fresh install di server produksi).
+      - ./migrations/001_init_postgis.sql:/docker-entrypoint-initdb.d/01_init_postgis.sql:ro
+      - ./migrations/002_seed_data.sql:/docker-entrypoint-initdb.d/02_seed_data.sql:ro
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d smart_lapor_db"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-smart_lapor_db}"]
       interval: 5s
       timeout: 5s
-      retries: 5
+      retries: 10
+      start_period: 20s
 
-  # Rust Backend Application
+  # ---------------------------------------------------------------------------
+  # Rust Axum Backend Application
+  # ---------------------------------------------------------------------------
   app:
     build:
       context: .
       dockerfile: Dockerfile
     container_name: smart_lapor_app
-    restart: always
+    restart: unless-stopped
     depends_on:
       db:
         condition: service_healthy
     environment:
-      DATABASE_URL: postgres://postgres:postgrespassword@db:5432/smart_lapor_db
+      # FIX #3: Semua nilai diambil dari .env — override di panel hosting untuk produksi
+      DATABASE_URL: postgres://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgrespassword}@db:5432/${POSTGRES_DB:-smart_lapor_db}
       SERVER_HOST: 0.0.0.0
       SERVER_PORT: 8080
-      JWT_SECRET: super_secret_smart_lapor_kota_jwt_key_2026_teknokrat
-      RUST_LOG: info,smart_lapor_kota=debug
-      UPLOAD_DIR: ./static/uploads
+      JWT_SECRET: ${JWT_SECRET:-GANTI_DI_PRODUKSI}
+      RUST_LOG: ${RUST_LOG:-info}
+      APP_ENV: ${APP_ENV:-production}
+      UPLOAD_DIR: /app/static/uploads
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-*}
     ports:
-      - "8080:8080"
+      - "${APP_PORT:-8080}:8080"
     volumes:
-      - ./static/uploads:/app/static/uploads
+      # Persist uploaded photos across container restarts
+      - uploads_data:/app/static/uploads
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:8080/ || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
 
 volumes:
   pgdata:
-
+    driver: local
+  uploads_data:
+    driver: local

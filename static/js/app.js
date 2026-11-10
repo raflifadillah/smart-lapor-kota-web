@@ -2,8 +2,14 @@
  * Smart Public Facility & Incident Reporter
  * Frontend Application Core
  * Copyright (C) 2026 Rafli Fadillah & Dr. Erliyan Redy Susanto, M.Kom
+ *
+ * FIX #2 (Production-Safe): API_BASE bersifat relatif ('/api') sehingga selalu
+ * mengacu ke domain/host yang sedang melayani halaman ini — tidak pernah hardcoded
+ * ke 'http://localhost:8080'. Ini memastikan aplikasi bekerja di lokal, staging,
+ * maupun produksi tanpa perubahan kode.
  */
 
+// Relatif path — aman untuk semua environment (localhost, VPS, container, cloud)
 const API_BASE = '/api';
 
 // Initial state and sample seed fallback for instant preview

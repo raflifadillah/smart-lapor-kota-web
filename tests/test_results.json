@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-11-10T14:41:51.227Z",
+  "timestamp": "2026-11-10T15:26:32.837Z",
   "environment": {
     "nodeVersion": "v26.13.0",
     "platform": "win32",
@@ -10,7 +10,7 @@
     "total": 15,
     "passed": 15,
     "failed": 0,
-    "durationMs": 232
+    "durationMs": 84
   },
   "testCases": [
     {
@@ -29,7 +29,7 @@
       "scenario": "Memastikan file logo Pemerintah Daerah (/assets/logo-pemda.png) tersedia dan dapat diakses publik",
       "input": "GET /assets/logo-pemda.png",
       "expected": "HTTP 200 image/png dengan ukuran > 100KB",
-      "actual": "HTTP 200 (333249 bytes)",
+      "actual": "HTTP 200 (333248 bytes)",
       "status": "PASS",
       "notes": ""
     },
@@ -79,7 +79,7 @@
       "scenario": "Pengujian pengiriman laporan kerusakan fasilitas baru beserta nomor tiket otomatis",
       "input": "{\"title\":\"Uji Coba Lubang Aspal Hasil Penetrasi Hujan\",\"category\":\"Jalan Berlubang\"}",
       "expected": "HTTP 201 dengan tiket format LAP-2026-XXXX dan status Diajukan",
-      "actual": "HTTP 201, ticket: LAP-2026-7072",
+      "actual": "HTTP 201, ticket: LAP-2026-4207",
       "status": "PASS",
       "notes": ""
     },

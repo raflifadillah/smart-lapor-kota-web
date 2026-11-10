@@ -1,16 +1,30 @@
 {
   "name": "smart-lapor-kota",
   "version": "1.0.0",
-  "description": "Smart Public Facility & Incident Reporter - Smart City Civic Operations Platform",
-  "main": "dev-server.js",
+  "description": "Smart Public Facility & Incident Reporter — Smart City Civic Operations Platform",
+  "main": "server.js",
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "scripts": {
-    "start": "node dev-server.js",
+    "start": "node server.js",
+    "dev": "node dev-server.js",
+    "test": "node tests/test_runner.js",
+    "build:report": "node tests/generate_report.js",
+    "pm2:start": "pm2 start server.js --name smart-lapor-kota --env production",
+    "pm2:stop": "pm2 stop smart-lapor-kota",
+    "pm2:restart": "pm2 restart smart-lapor-kota",
+    "pm2:logs": "pm2 logs smart-lapor-kota",
+    "docker:build": "docker build -t smart-lapor-kota:latest .",
     "docker:up": "docker-compose up -d",
-    "docker:down": "docker-compose down"
+    "docker:up:build": "docker-compose up -d --build",
+    "docker:down": "docker-compose down",
+    "docker:logs": "docker-compose logs -f app"
   },
   "author": "Rafli Fadillah & Dr. Erliyan Redy Susanto, M.Kom",
   "license": "MIT",
   "dependencies": {
     "docx": "^9.15.3"
-  }
+  },
+  "devDependencies": {}
 }

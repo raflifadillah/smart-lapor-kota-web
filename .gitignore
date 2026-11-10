@@ -1,0 +1,34 @@
+# =====================================================
+# Smart Lapor Kota — .gitignore
+# =====================================================
+
+# FIX #3: File .env berisi secret — JANGAN pernah commit ke Git
+.env
+.env.local
+.env.production
+
+# FIX #6: Logo di root folder (duplikat; aslinya di static/assets/)
+logo-pemda.png
+logo-uti.jpeg
+
+# Node.js
+node_modules/
+npm-debug.log*
+
+# Rust/Cargo build artifacts
+target/
+Cargo.lock
+
+# Upload direktori (berisi file user — jangan commit ke repo)
+static/uploads/*
+!static/uploads/.gitkeep
+
+# Test output
+tests/test_results.json
+
+# OS / Editor
+.DS_Store
+Thumbs.db
+*.swp
+.vscode/settings.json
+
