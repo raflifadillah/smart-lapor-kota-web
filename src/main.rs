@@ -1,61 +1,34 @@
-mod config;
-mod db;
-mod error;
-mod handlers;
-mod models;
-mod routes;
-
-use config::Config;
-use std::net::SocketAddr;
-use tracing::{error, info};
-use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
+use std::env;
+use std::path::Path;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    // Initialize logging
-    tracing_subscriber::registry()
-        .with(
-            tracing_subscriber::EnvFilter::try_from_default_env()
-                .unwrap_or_else(|_| "info,smart_lapor_kota=debug,tower_http=debug".into()),
-        )
-        .with(tracing_subscriber::fmt::layer())
-        .init();
+    // 1. Inisialisasi logging/tracing (tetapkan seperti kode lama kamu)
+    tracing_subscriber::fmt::init();
 
-    info!("============================================================");
-    info!(" Smart Public Facility & Incident Reporter - Smart City");
-    info!(" Built with Rust, Axum, Tokio, SQLx & PostgreSQL PostGIS");
-    info!(" Copyright (C) 2026 Rafli Fadillah & Dr. Erliyan Redy Susanto, M.Kom");
-    info!("============================================================");
-
-    // Ambil DATABASE_URL dari Environment Variable Vercel / Config
-    let database_url = std::env::var("DATABASE_URL").unwrap_or_else(|_| {
-        let cfg = Config::from_env();
-        cfg.database_url
+    // 2. GANTI BAGIAN DATABASE_URL DENGAN KODE INI:
+    let database_url = env::var("DATABASE_URL").unwrap_or_else(|_| {
+        "postgres://postgres:postgrespassword@localhost:5432/smart_lapor_db".to_string()
     });
 
-    // Tangani read-only filesystem Vercel secara aman agar tidak crash
-    if let Err(e) = std::fs::create_dir_all("./static/uploads") {
-        tracing::warn!("Could not create upload directory ./static/uploads: {}", e);
+    tracing::info!("Connecting to database at: {}", database_url);
+
+    // 3. GANTI BAGIAN UPLOAD DIR DENGAN KODE INI (Aman dari os error 30 Read-only system):
+    let upload_dir = Path::new("./static/uploads");
+    if !upload_dir.exists() {
+        if let Err(e) = std::fs::create_dir_all(upload_dir) {
+            tracing::warn!("Read-only filesystem detected, skipping dir creation: {}", e);
+        }
     }
 
-    // Initialize Database Pool
-    let pool = db::init_db(&database_url).await.map_err(|e| {
-        error!("Failed to connect to PostgreSQL: {}", e);
-        error!("Please make sure PostgreSQL is running with PostGIS enabled.");
-        error!("You can run: docker-compose up -d to start the database container.");
-        e
-    })?;
+    // 4. KONEKSI POOL DATABASE (Gunakan variabel database_url di atas)
+    let pool = sqlx::postgres::PgPoolOptions::new()
+        .max_connections(5)
+        .connect(&database_url)
+        .await?;
 
-    // Create Axum router
-    let app = routes::create_router(pool);
-
-    // Run application listener
-    let port = std::env::var("PORT").unwrap_or_else(|_| "3000".to_string());
-    let addr: SocketAddr = format!("0.0.0.0:{}", port).parse()?;
-    info!("Server starting on {}", addr);
-
-    let listener = tokio::net::TcpListener::bind(&addr).await?;
-    axum::serve(listener, app).await?;
+    // --- BIARKAN KODE ROUTER AXUM & BIND ADDRESS SEPERTI SEMULA ---
+    // (Jangan hapus router Axum, state pool, dan axum::serve kamu di bawahnya)
 
     Ok(())
 }
